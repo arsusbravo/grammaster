@@ -1,1 +1,0 @@
-import{n as e}from"./pinia-1p58kqB-.js";import{A as t,B as n,It as r}from"./AppButton-BIVJSPvr.js";var i=e(`catalog`,()=>{let e=r([]),i=r({});async function a(){e.value.length===0&&(e.value=await t())}async function o(e,t=!1){(t||!i.value[e])&&(i.value[e]=await n(e))}return{levels:e,topicsByLevel:i,loadLevels:a,loadTopics:o}});export{i as t};

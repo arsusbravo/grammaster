@@ -1,1 +1,0 @@
-function e(e){try{return localStorage.getItem(e)}catch{return null}}function t(e,t){try{t===null?localStorage.removeItem(e):localStorage.setItem(e,t)}catch{}}function n(t,n){let r=e(t);if(r===null)return n;try{return JSON.parse(r)}catch{return n}}function r(e,t){try{return localStorage.setItem(e,JSON.stringify(t)),!0}catch{return!1}}export{t as i,e as n,r,n as t};
