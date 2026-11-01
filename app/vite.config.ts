@@ -13,6 +13,16 @@ const appName: string = nl.app.name
 // For a Capacitor build use VITE_BASE=/ (the app is then served from the root of the webview).
 const base = process.env.VITE_BASE ?? '/student/'
 
+// In development the app calls the API on its own origin (/api/v1); this forwards it to the Laravel site served by
+// Herd. Run `herd secure gramaster` and set VITE_DEV_API_TARGET=https://gramaster.test to use https instead.
+const apiProxy = {
+  '/api': {
+    target: process.env.VITE_DEV_API_TARGET ?? 'http://gramaster.test',
+    changeOrigin: true,
+    secure: false,
+  },
+}
+
 export default defineConfig({
   base,
   plugins: [
@@ -113,11 +123,15 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: {
-    host: '0.0.0.0',
     port: 5174,
     strictPort: true,
-    // Bind mounts on Docker Desktop do not reliably emit file events.
-    watch: { usePolling: true },
+    proxy: apiProxy,
+  },
+  // `npm run preview` serves the production build (service worker, offline mode) the same way.
+  preview: {
+    port: 5174,
+    strictPort: true,
+    proxy: apiProxy,
   },
   test: {
     environment: 'jsdom',

@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => array_filter(explode(',', (string) env('SPA_URL', 'http://localhost:8088'))),
+    'allowed_origins' => array_filter(explode(',', (string) env('SPA_URL', 'http://gramaster.test'))),
 
     'allowed_origins_patterns' => [],
 

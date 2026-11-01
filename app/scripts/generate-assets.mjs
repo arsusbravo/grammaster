@@ -1,5 +1,5 @@
 // Derives all brand image assets from the original logo (src/assets/logo-original.png, never modified).
-// Run with: make npm c="run assets"
+// Run with: npm run assets
 import sharp from 'sharp'
 import { mkdir } from 'node:fs/promises'
 
