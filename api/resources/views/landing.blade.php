@@ -168,8 +168,8 @@
         .tab:not([aria-selected="true"]):hover { background: var(--surface-muted); }
         .panel { margin-top: 1.5rem; }
         .panel[hidden] { display: none; }
-        .qlist { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); align-items: start; }
-        .q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 1.5rem; }
+        .qlist { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+        .q { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 1.5rem; }
         .q .meta { color: var(--accent-ink); font-weight: 700; font-size: .875rem; letter-spacing: .04em; text-transform: uppercase; }
         .q h3 { margin-top: .5rem; font-size: 1.3125rem; }
         .q .hint { margin-top: .5rem; color: var(--ink-muted); font-size: .9375rem; }
@@ -194,6 +194,8 @@
         .token[aria-pressed="true"] { border-color: var(--secondary); background: var(--surface-muted); }
         .is-right { border-color: var(--success) !important; background: var(--success-soft) !important; }
         .is-wrong { border-color: var(--error) !important; background: var(--error-soft) !important; }
+        /* Cards in a row are equally tall; the feedback and the button sit at the bottom so the buttons line up. */
+        .q-foot { margin-top: auto; }
         .q .btn { margin-top: 1.25rem; }
         .q .btn[disabled] { opacity: .6; cursor: default; }
         .fb { margin-top: 1rem; padding: .875rem 1rem; border-radius: var(--radius-control); border: 2px solid; }
@@ -303,8 +305,10 @@
                                         </fieldset>
                                     @endif
 
-                                    <button type="submit" class="btn btn-solid">{{ __('landing.try.check') }}</button>
-                                    <div class="fb" role="status" aria-live="polite" hidden></div>
+                                    <div class="q-foot">
+                                        <div class="fb" role="status" aria-live="polite" hidden></div>
+                                        <button type="submit" class="btn btn-solid">{{ __('landing.try.check') }}</button>
+                                    </div>
                                 </form>
                             @endforeach
                         </div>
