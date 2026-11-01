@@ -26,6 +26,24 @@ jobs:
           SSH_USER: ${{ secrets.DEPLOY_USER }}
           DIR: ${{ secrets.DEPLOY_PATH }}
         run: |
+          # A pasted secret often carries a trailing space or newline, which breaks "user@host".
+          HOST="$(printf '%s' "$HOST" | tr -d '[:space:]')"
+          SSH_USER="$(printf '%s' "$SSH_USER" | tr -d '[:space:]')"
+          DIR="$(printf '%s' "$DIR" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
+          missing=""
+          for name in SSH_KEY KNOWN_HOSTS HOST SSH_USER DIR; do
+            [ -n "${!name}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Empty secret(s) for:$missing"
+            echo "Create them as REPOSITORY secrets (Settings > Secrets and variables > Actions > Secrets tab, not Variables):"
+            echo "  SSH_KEY=DEPLOY_SSH_KEY  KNOWN_HOSTS=DEPLOY_KNOWN_HOSTS  HOST=DEPLOY_HOST  SSH_USER=DEPLOY_USER  DIR=DEPLOY_PATH"
+            exit 1
+          fi
+          # Lengths only (never the values), to see what arrived.
+          echo "secret lengths: host=${#HOST} user=${#SSH_USER} path=${#DIR} key=${#SSH_KEY} known_hosts=${#KNOWN_HOSTS}"
+
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
