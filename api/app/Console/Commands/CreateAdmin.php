@@ -36,7 +36,7 @@ class CreateAdmin extends Command
             ['email' => $email, 'name' => $name, 'password' => $plain],
             [
                 'email' => ['required', 'email'],
-                'name' => ['required', 'string', 'max:255'],
+                'name' => ['required', 'string', 'max:191'],
                 'password' => [$user->exists ? 'nullable' : 'required', 'string', 'min:8'],
             ],
         );

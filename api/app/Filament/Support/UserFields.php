@@ -11,7 +11,7 @@ final class UserFields
 {
     public static function name(): TextInput
     {
-        return TextInput::make('name')->label('Naam')->required()->maxLength(255);
+        return TextInput::make('name')->label('Naam')->required()->maxLength(191);
     }
 
     public static function email(): TextInput
@@ -20,7 +20,7 @@ final class UserFields
             ->label('E-mailadres')
             ->email()
             ->required()
-            ->maxLength(255)
+            ->maxLength(191)
             ->unique(ignoreRecord: true);
     }
 
@@ -33,7 +33,7 @@ final class UserFields
             ->revealable()
             ->autocomplete('new-password')
             ->minLength(8)
-            ->maxLength(255)
+            ->maxLength(191)
             ->required(fn (string $operation) => $operation === 'create')
             ->dehydrated(fn (?string $state) => filled($state))
             ->helperText(fn (string $operation) => $operation === 'create'

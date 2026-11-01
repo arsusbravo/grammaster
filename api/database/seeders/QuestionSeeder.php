@@ -48,7 +48,8 @@ class QuestionSeeder extends Seeder
     }
 
     /**
-     * MySQL normalizes the key order of JSON columns, so compare with keys sorted recursively.
+     * Compare with keys sorted recursively: the stored JSON text keeps the order it was saved in, and the content files
+     * may list keys in another order.
      *
      * @param  array<string, mixed>  $data
      */

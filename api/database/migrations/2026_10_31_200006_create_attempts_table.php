@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('attempt_id')->constrained()->cascadeOnDelete();
             // Restrict: student history must not vanish when a question is deleted (unpublish instead).
             $table->foreignId('question_id')->constrained()->restrictOnDelete();
-            $table->json('answer');
+            $table->longText('answer'); // JSON text (cast to array); MariaDB 5.5 has no json type
             $table->boolean('is_correct')->nullable();
             $table->unsignedInteger('time_spent_seconds')->default(0);
             $table->timestamps();

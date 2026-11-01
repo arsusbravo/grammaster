@@ -47,7 +47,7 @@ class TopicResource extends Resource
             TextInput::make('name')
                 ->label('Naam')
                 ->required()
-                ->maxLength(255)
+                ->maxLength(191)
                 ->live(onBlur: true)
                 ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                     if (blank($get('slug'))) {
@@ -57,7 +57,7 @@ class TopicResource extends Resource
             TextInput::make('slug')
                 ->label('Code')
                 ->required()
-                ->maxLength(255)
+                ->maxLength(191)
                 ->regex('/^[a-z0-9-]+$/')
                 ->unique(ignoreRecord: true)
                 ->helperText('Kleine letters, cijfers en streepjes. De app gebruikt deze code in filters; wijzig hem alleen als het echt moet.'),

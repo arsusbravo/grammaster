@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('type', 32)->index();
             $table->text('prompt');
             // Type-specific content (see App\Support\QuestionData); new types need no migration.
-            $table->json('data');
+            $table->longText('data'); // JSON text (cast to array); MariaDB 5.5 has no json type
             $table->text('explanation');
             $table->unsignedTinyInteger('difficulty')->default(1);
             $table->boolean('is_published')->default(false);

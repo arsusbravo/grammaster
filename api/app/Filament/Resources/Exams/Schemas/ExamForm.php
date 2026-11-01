@@ -22,7 +22,7 @@ class ExamForm
             Section::make('Examen')
                 ->columns(2)
                 ->schema([
-                    TextInput::make('title')->label('Titel')->required()->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Titel')->required()->maxLength(191)->columnSpanFull(),
                     Select::make('level_id')
                         ->label('Niveau')
                         ->relationship('level', 'name')
