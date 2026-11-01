@@ -56,10 +56,24 @@ $PHP_BIN artisan optimize
 `storage/` and `bootstrap/cache/` must be writable by the site's system user (run the commands as that user, or `chown -R`).
 The repository can live outside the web root; point the Plesk document root at its `api/public`.
 
-**Every update**
-- Server (over SSH, in the repository): `git pull --ff-only`, `cd api`, `composer install --no-dev --optimize-autoloader`, `php artisan migrate --force`, `php artisan optimize` (with `PHP_BIN` and the Plesk Composer path as above).
-- Student app: the server has no Node, so the built app is committed in `api/public/student`. After changing anything in `app/`, run `cd app && npm run build:herd`, then commit and push `api/public/student` together with the source. `git pull` on the server then brings the new build.
+**Every update: automatic.** Every push to `main` runs the GitHub workflow `.github/workflows/deploy.yml`. It logs in to the server over SSH, runs `git pull --ff-only` and then `./deploy.sh` (composer install without dev packages, `migrate --force`, `optimize`). You can also start it by hand from the repository's **Actions** tab → Deploy → Run workflow, or run `./deploy.sh` on the server yourself.
 
-**CI** (`.github/workflows/ci.yml`): Pint + Pest on PHP 8.3 with MySQL 9.7, and lint, typecheck, Vitest and build for the app, on every push and pull request.
+The student app is not built on the server (no recent Node): its build is committed in `api/public/student`. After changing anything in `app/`, run `cd app && npm run build:herd` and commit `api/public/student` together with your source change.
+
+*One-time setup of the automatic deploy*
+1. On your Mac create a key only for this: `ssh-keygen -t ed25519 -f ~/.ssh/grammaster_deploy -C "github deploy" -N ""`.
+2. Add the public key (`~/.ssh/grammaster_deploy.pub`) to `~/.ssh/authorized_keys` of the server user that owns the site.
+3. Get the server's fingerprint line: `ssh-keyscan -H grammaster.arsus.it` (check it against the server if you want to be sure).
+4. GitHub → repository → Settings → Secrets and variables → Actions → New repository secret, five times:
+   - `DEPLOY_HOST`: `grammaster.arsus.it`
+   - `DEPLOY_USER`: the SSH user of the site
+   - `DEPLOY_PATH`: the repository folder on the server, e.g. `/var/www/vhosts/arsus.it/grammaster.arsus.it/grammaster`
+   - `DEPLOY_SSH_KEY`: the whole content of `~/.ssh/grammaster_deploy` (the private key)
+   - `DEPLOY_KNOWN_HOSTS`: the output of the `ssh-keyscan` command above
+5. The server must be able to `git pull` without a password (the deploy key you used for the first clone), and `deploy.sh` must be executable (`chmod +x deploy.sh`, already set in git).
+
+There are no automatic tests: a broken push is deployed as well, and migrations run automatically. Run the tests locally before you push.
+
+**Tests** are run locally, there is no CI: `php artisan test` in `api/` and `npm test` in `app/` before committing.
 
 Checks afterwards: `/up`, `/api/v1/levels`, `/student/` (service worker needs HTTPS), `/admin` login.
