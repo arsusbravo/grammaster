@@ -1,0 +1,114 @@
+/*
+ * Single source of truth for the visual design (derived from the logo).
+ * Every colour is defined once as light-dark(<light>, <dark>); the scheme follows the system
+ * setting. `data-theme` on <html> forces a scheme (used by the /design review page only).
+ * Contrast of every text/background pair is verified in src/design/contrast.test.ts.
+ *
+ * Logo colours: navy #0b2240, gold #b5853a.
+ * Gold on white is only ~3.2:1, so gold is used for fills and decoration (with navy text on top);
+ * gold used AS text uses the darker --accent-ink instead.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces and text (neutral grays are tinted towards the navy) */
+  --canvas: light-dark(#f7f9fc, #081426);
+  --surface: light-dark(#ffffff, #0f2038);
+  --surface-muted: light-dark(#eef2f8, #162a48);
+  --border: light-dark(#cbd5e3, #2d4468);
+  --border-strong: light-dark(#6b7c96, #7f93b3);
+  --ink: light-dark(#0b2240, #e8eef7);
+  --ink-muted: light-dark(#4a5b74, #a9b8ce);
+
+  /* Primary (navy in light, pale navy tint in dark) */
+  --primary: light-dark(#0b2240, #dce6f5);
+  --primary-hover: light-dark(#173a68, #ffffff);
+  --on-primary: light-dark(#ffffff, #0b2240);
+
+  /* Secondary (blue derived from the navy) */
+  --secondary: light-dark(#1f4e8c, #8db4ea);
+  --secondary-hover: light-dark(#183f73, #a8c6f0);
+  --on-secondary: light-dark(#ffffff, #081426);
+
+  /* Accent (logo gold) */
+  --accent: light-dark(#b5853a, #c9974a);
+  --accent-hover: light-dark(#c69a52, #dba95c);
+  --on-accent: light-dark(#0b2240, #081426);
+  --accent-ink: light-dark(#7d5710, #dcae62);
+
+  /* Keyboard focus ring */
+  --focus: light-dark(#1f4e8c, #8db4ea);
+
+  /* Feedback: strong colour (icons, borders), soft background, readable text on that background */
+  --success: light-dark(#17663a, #5fd08a);
+  --success-soft: light-dark(#e4f4ea, #0f2e1d);
+  --success-ink: light-dark(#0f4a2a, #9be5b8);
+  --error: light-dark(#b3261e, #ff8a80);
+  --error-soft: light-dark(#fcebe9, #3b1513);
+  --error-ink: light-dark(#7a1812, #ffb4ab);
+  --warning: light-dark(#8a5300, #f2b84b);
+  --warning-soft: light-dark(#fff1d6, #3a2a08);
+  --warning-ink: light-dark(#5e3a00, #ffd98a);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-on-secondary: var(--on-secondary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-ink: var(--success-ink);
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+  --color-error-ink: var(--error-ink);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-ink: var(--warning-ink);
+
+  /* Fonts are self-hosted through @fontsource (bundled by Vite, no external CDN) */
+  --font-sans: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+
+  /* Rounded, friendly but not childish */
+  --radius-control: 0.875rem;
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(11 34 64 / 0.06), 0 4px 16px rgb(11 34 64 / 0.06);
+}
+
+/*
+ * Safe-area helpers (notches, home indicator) so the build can be wrapped by Capacitor as is.
+ * pt/pb-safe add the inset on top of nothing; px-page is the page gutter (1rem, or the inset if larger).
+ */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility px-page {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}

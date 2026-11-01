@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#081426" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>%APP_NAME%</title>
+    <!-- Installed on a home screen: full screen, with the status bar drawn over the page (the layout keeps clear of it). -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="%APP_NAME%" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    <script>
+      // Apply the saved theme before anything is painted (no flash of the wrong colours).
+      try {
+        var saved = localStorage.getItem('grammatica.theme')
+        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved
+      } catch (e) {}
+    </script>
+    <style>
+      /* Launch splash: pure HTML/CSS so it shows before any JavaScript has loaded. */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f7f9fc;
+        transition: opacity 0.35s ease;
+      }
+      #splash img {
+        width: min(60vw, 320px);
+        height: auto;
+      }
+      #splash .logo-dark {
+        display: none;
+      }
+      #splash.splash-hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      /* Dark: when the device is dark (unless the student chose light) or when the student chose dark. */
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) #splash {
+          background: #081426;
+        }
+        :root:not([data-theme='light']) #splash .logo-light {
+          display: none;
+        }
+        :root:not([data-theme='light']) #splash .logo-dark {
+          display: block;
+        }
+      }
+      :root[data-theme='dark'] #splash {
+        background: #081426;
+      }
+      :root[data-theme='dark'] #splash .logo-light {
+        display: none;
+      }
+      :root[data-theme='dark'] #splash .logo-dark {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <img class="logo-light" src="/logo.png" alt="" />
+      <img class="logo-dark" src="/logo-dark.png" alt="" />
+    </div>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

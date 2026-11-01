@@ -1,0 +1,170 @@
+@import 'tailwindcss';
+@import './styles/theme.css';
+
+@layer base {
+  html {
+    /* No pull-to-refresh or bounce that would reload the page in the middle of an exam. */
+    overscroll-behavior-y: contain;
+    background-color: var(--canvas);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-base leading-relaxed text-ink antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Taps react at once (no waiting for a possible double-tap zoom). */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role='button'],
+  [role='radio'],
+  [role='checkbox'] {
+    touch-action: manipulation;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold tracking-tight text-ink;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Respect "reduce motion": no animation at all. (A repeating animation with a tiny duration would strobe, so it runs once.) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* --- Page transitions (see components/layout/PageView.vue and lib/pageTransition.ts) --- */
+.page-fade-enter-active,
+.page-forward-enter-active,
+.page-back-enter-active {
+  transition:
+    opacity 220ms ease,
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.page-fade-leave-active,
+.page-forward-leave-active,
+.page-back-leave-active {
+  transition:
+    opacity 110ms ease,
+    transform 130ms ease-in;
+}
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+}
+.page-forward-enter-from,
+.page-back-leave-to {
+  opacity: 0;
+  transform: translateX(32px);
+}
+.page-forward-leave-to,
+.page-back-enter-from {
+  opacity: 0;
+  transform: translateX(-32px);
+}
+
+/* A new question slides in softly (practice and exam). */
+.question-enter-active {
+  transition:
+    opacity 200ms ease,
+    transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.question-leave-active {
+  transition: opacity 90ms ease;
+}
+.question-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.question-leave-to {
+  opacity: 0;
+}
+
+/* Feedback (verdict + explanation) rises into place. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.rise-in {
+  animation: rise-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* --- Loader: a thin bar at the top while the app waits for the server --- */
+@keyframes loader-slide {
+  0% {
+    transform: translateX(-100%) scaleX(0.3);
+  }
+  50% {
+    transform: translateX(80%) scaleX(0.6);
+  }
+  100% {
+    transform: translateX(230%) scaleX(0.3);
+  }
+}
+.loader-bar {
+  animation: loader-slide 1.15s ease-in-out infinite;
+}
+.loader-fade-enter-active,
+.loader-fade-leave-active {
+  transition: opacity 180ms ease;
+}
+.loader-fade-enter-from,
+.loader-fade-leave-to {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No sliding: a calm, full-width bar. */
+  .loader-bar {
+    animation: none;
+    transform: none;
+    opacity: 0.7;
+  }
+}
+
+/* Long-form Dutch explanation text */
+.explanation {
+  @apply max-w-prose text-[1.0625rem] leading-[1.7];
+}
+
+/* Logo variant per colour scheme (system by default, `data-theme` forces one) */
+.brand-logo-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .brand-logo-light {
+    display: none;
+  }
+  :root:not([data-theme='light']) .brand-logo-dark {
+    display: block;
+  }
+}
+
+:root[data-theme='dark'] .brand-logo-light {
+  display: none;
+}
+:root[data-theme='dark'] .brand-logo-dark {
+  display: block;
+}
