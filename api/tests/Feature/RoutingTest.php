@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use App\Models\Level;
+use App\Models\Question;
 
 it('shows the landing page on the home address with links to the student app', function (): void {
     $this->get('/')
@@ -9,6 +11,28 @@ it('shows the landing page on the home address with links to the student app', f
         ->assertSee('href="/student/"', false)
         ->assertSee('href="/student/login"', false)
         ->assertSee('href="/student/registreren"', false);
+});
+
+it('offers sample questions on the landing page without giving away the answers', function (): void {
+    $level = Level::factory()->create(['slug' => 'havo', 'name' => 'HAVO']);
+    Question::factory()->create(['level_id' => $level->id, 'prompt' => 'Welke zin is goed gespeld?']);
+    Question::factory()->fillBlank()->create(['level_id' => $level->id]);
+    Question::factory()->markError()->create(['level_id' => $level->id]);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('Probeer het zelf')
+        ->assertSee('HAVO')
+        ->assertSee('Welke zin is goed gespeld?')
+        ->assertSee('/api/v1/samples', false)
+        ->assertSee('href="/student/registreren"', false)
+        ->assertDontSee('error_index')
+        ->assertDontSee('accepted')
+        ->assertDontSee('data-correct');
+});
+
+it('leaves the sample section out when there are no questions yet', function (): void {
+    $this->get('/')->assertOk()->assertDontSee('Probeer het zelf');
 });
 
 it('keeps the admin and the API on their own paths', function (): void {

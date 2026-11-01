@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * Feedback for one answer (practice): verdict, correct answer and explanation.
  *
- * @property-read array{question: Question, result: AnswerResult, attempt_id: int} $resource
+ * @property-read array{question: Question, result: AnswerResult, attempt_id: int|null} $resource
  */
 class AnswerResultResource extends JsonResource
 {

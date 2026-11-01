@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\CatalogController;
 use App\Http\Controllers\Api\V1\ExamController;
 use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\QuestionController;
+use App\Http\Controllers\Api\V1\SampleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->middleware('throttle:api')->group(function (): void {
@@ -17,6 +18,10 @@ Route::prefix('v1')->middleware('throttle:api')->group(function (): void {
     // Needed on the register screen, so public.
     Route::get('levels', [CatalogController::class, 'levels']);
     Route::get('topics', [CatalogController::class, 'topics']);
+
+    // Try-out questions for the landing page: public, nothing is stored, and only for a small fixed set of questions.
+    Route::get('samples', [SampleController::class, 'index']);
+    Route::post('samples/{question}/answer', [SampleController::class, 'answer'])->middleware('throttle:samples');
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('auth/logout', [AuthController::class, 'logout']);

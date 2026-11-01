@@ -1,9 +1,10 @@
 <?php
 
+use App\Services\SampleQuestions;
 use Illuminate\Support\Facades\Route;
 
 // The landing page is the home page; the student app lives at /student/, the Filament admin at /admin and the API at /api/v1.
-Route::view('/', 'landing');
+Route::get('/', fn (SampleQuestions $samples) => view('landing', ['samples' => $samples->byLevel()]));
 
 // The built student app (api/public/student) is a single-page app: its files are served as static files, and every
 // other /student/... address (the page itself, deep links such as /student/examens) gets index.html so the Vue router

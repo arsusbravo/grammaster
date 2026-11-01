@@ -29,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
         // Guessing the current password through this endpoint must not be possible.
         RateLimiter::for('password', fn (Request $request) => Limit::perMinute(5)->by((string) $request->user()?->id));
 
+        RateLimiter::for('samples', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
+
         RateLimiter::for('register', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
 
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)

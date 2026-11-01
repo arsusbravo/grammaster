@@ -18,8 +18,28 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # Marks the student app's hashed files (see the headers below).
+    RewriteRule ^student/assets/ - [E=STUDENT_ASSET:1]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# The student app (api/public/student, the built Vue app). Needs mod_headers; without it the app still works, but
+# browsers may keep an old service worker for a while.
+<IfModule mod_headers.c>
+    # Hashed files never change: cache for a year.
+    Header set Cache-Control "public, max-age=31536000, immutable" env=STUDENT_ASSET
+
+    # The page, the service worker and its helpers, and the manifest must always be re-checked, otherwise students
+    # stay on an old version of the app.
+    <FilesMatch "^(index\.html|sw\.js|registerSW\.js|manifest\.webmanifest|workbox-[^/]+\.js)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
 </IfModule>
