@@ -28,5 +28,3 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-# Built student app (npm run watch / build:herd locally, rsync to the server)
-/public/student

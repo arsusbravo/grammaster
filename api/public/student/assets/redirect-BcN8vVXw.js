@@ -1,0 +1,1 @@
+function e(e,t=`/`){return typeof e==`string`&&e.startsWith(`/`)&&!e.startsWith(`//`)?e:t}export{e as t};

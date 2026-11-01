@@ -58,7 +58,7 @@ The repository can live outside the web root; point the Plesk document root at i
 
 **Every update**
 - Server (over SSH, in the repository): `git pull --ff-only`, `cd api`, `composer install --no-dev --optimize-autoloader`, `php artisan migrate --force`, `php artisan optimize` (with `PHP_BIN` and the Plesk Composer path as above).
-- Student app (needs Node, so it is built on your Mac): `cd app && VITE_BASE=/student/ VITE_API_BASE_URL=/api/v1 npm run build`, then `rsync -az --delete dist/ user@host:<path>/api/public/student/`. CI also uploads the build as the `student-dist` artifact.
+- Student app: the server has no Node, so the built app is committed in `api/public/student`. After changing anything in `app/`, run `cd app && npm run build:herd`, then commit and push `api/public/student` together with the source. `git pull` on the server then brings the new build.
 
 **CI** (`.github/workflows/ci.yml`): Pint + Pest on PHP 8.3 with MySQL 9.7, and lint, typecheck, Vitest and build for the app, on every push and pull request.
 
