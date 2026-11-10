@@ -29,12 +29,12 @@ And in `app/`:
 | `npm run build && npm run preview`       | Production build on port 5174, with the service worker (offline mode, install) |
 | `npm run assets`                         | Regenerate favicons, PWA icons and splash images from the logo |
 
-## Deploying to the development server (grammaster.arsus.it, Plesk, no Docker)
+## Deploying to the development server (grammas.arsus.it, Plesk, no Docker)
 
 The server (CentOS 7 + Plesk) runs the app natively: Plesk's nginx (proxy) + Apache + PHP 8.3 FPM + MySQL. No Docker anywhere.
 
 **One time, in Plesk**
-1. Add the domain `grammaster.arsus.it` (DNS A record to the VPS). Hosting settings: PHP 8.3 as "FPM application served by Apache", document root `.../api/public`. Plesk's nginx stays in front as a proxy (the default), and Apache reads `api/public/.htaccess`.
+1. Add the domain `grammas.arsus.it` (DNS A record to the VPS). Hosting settings: PHP 8.3 as "FPM application served by Apache", document root `.../api/public`. Plesk's nginx stays in front as a proxy (the default), and Apache reads `api/public/.htaccess`.
 2. SSL/TLS: issue Let's Encrypt and turn on "Permanent SEO-safe 301 redirect from HTTP to HTTPS".
 3. Databases: create a database and user. Note the credentials.
 4. Apache & nginx Settings: untick "Serve static files directly by nginx" (otherwise the cache headers in `.htaccess` do not apply to the student app's files). No nginx directives are needed.
@@ -61,16 +61,13 @@ The repository can live outside the web root; point the Plesk document root at i
 The student app is not built on the server (no recent Node): its build is committed in `api/public/student`. After changing anything in `app/`, run `cd app && npm run build:herd` and commit `api/public/student` together with your source change.
 
 *One-time setup of the automatic deploy*
-1. On your Mac create a key only for this: `ssh-keygen -t ed25519 -f ~/.ssh/grammaster_deploy -C "github deploy" -N ""`.
-2. Add the public key (`~/.ssh/grammaster_deploy.pub`) to `~/.ssh/authorized_keys` of the server user that owns the site.
-3. Get the server's fingerprint line: `ssh-keyscan -H grammaster.arsus.it` (check it against the server if you want to be sure).
-4. GitHub → repository → Settings → Secrets and variables → Actions → New repository secret, five times:
-   - `DEPLOY_HOST`: `grammaster.arsus.it`
-   - `DEPLOY_USER`: the SSH user of the site
-   - `DEPLOY_PATH`: the repository folder on the server, e.g. `/var/www/vhosts/arsus.it/grammaster.arsus.it/grammaster`
-   - `DEPLOY_SSH_KEY`: the whole content of `~/.ssh/grammaster_deploy` (the private key)
-   - `DEPLOY_KNOWN_HOSTS`: the output of the `ssh-keyscan` command above
+1. On your Mac create a key only for this: `ssh-keygen -t ed25519 -f ~/.ssh/grammas_deploy -C "github deploy" -N ""`.
+2. Add the public key (`~/.ssh/grammas_deploy.pub`) to `~/.ssh/authorized_keys` of the server user that owns the site.
+3. GitHub → repository → Settings → Secrets and variables → Actions → Secrets → New repository secret: name `DEPLOY_SSH_KEY`, value the whole private key (`cat ~/.ssh/grammas_deploy`, including the BEGIN and END lines). This is the only secret.
+4. In `.github/workflows/deploy.yml` fill in `DEPLOY_USER` (SSH user of the site) and `DEPLOY_PATH` (the folder the repository is cloned in, the one that contains `deploy.sh`). The host and the server's public host keys are already in the file; they are not secret.
 5. The server must be able to `git pull` without a password (the deploy key you used for the first clone), and `deploy.sh` must be executable (`chmod +x deploy.sh`, already set in git).
+
+The SSH host must resolve on the public internet and port 22 must be reachable from GitHub (a Cloudflare orange-cloud proxy does not carry SSH).
 
 There are no automatic tests: a broken push is deployed as well, and migrations run automatically. Run the tests locally before you push.
 

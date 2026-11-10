@@ -1,6 +1,7 @@
 name: Deploy
 
-# Deploys to grammaster.arsus.it after every push to main (and on demand from the Actions tab).
+# Deploys to grammas.arsus.it after every push to main (and on demand from the Actions tab).
+# The only secret is DEPLOY_SSH_KEY (the private key). Everything else is public information and lives here.
 on:
   push:
     branches: [main]
@@ -14,6 +15,12 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  DEPLOY_HOST: grammas.arsus.it
+  # SSH user of the site on the server, and the folder the repository is cloned in (the one that contains deploy.sh).
+  DEPLOY_USER: root
+  DEPLOY_PATH: CHANGE_ME
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,32 +28,26 @@ jobs:
       - name: Deploy over SSH
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          SSH_USER: ${{ secrets.DEPLOY_USER }}
-          DIR: ${{ secrets.DEPLOY_PATH }}
         run: |
-          # A pasted secret often carries a trailing space or newline, which breaks "user@host".
-          HOST="$(printf '%s' "$HOST" | tr -d '[:space:]')"
-          SSH_USER="$(printf '%s' "$SSH_USER" | tr -d '[:space:]')"
-          DIR="$(printf '%s' "$DIR" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-
-          missing=""
-          for name in SSH_KEY KNOWN_HOSTS HOST SSH_USER DIR; do
-            [ -n "${!name}" ] || missing="$missing $name"
-          done
-          if [ -n "$missing" ]; then
-            echo "::error::Empty secret(s) for:$missing"
-            echo "Create them as REPOSITORY secrets (Settings > Secrets and variables > Actions > Secrets tab, not Variables):"
-            echo "  SSH_KEY=DEPLOY_SSH_KEY  KNOWN_HOSTS=DEPLOY_KNOWN_HOSTS  HOST=DEPLOY_HOST  SSH_USER=DEPLOY_USER  DIR=DEPLOY_PATH"
+          if [ -z "$SSH_KEY" ]; then
+            echo "::error::The secret DEPLOY_SSH_KEY is empty (Settings > Secrets and variables > Actions > Secrets)."
             exit 1
           fi
-          # Lengths only (never the values), to see what arrived.
-          echo "secret lengths: host=${#HOST} user=${#SSH_USER} path=${#DIR} key=${#SSH_KEY} known_hosts=${#KNOWN_HOSTS}"
+          if [ "$DEPLOY_USER" = "CHANGE_ME" ] || [ "$DEPLOY_PATH" = "CHANGE_ME" ]; then
+            echo "::error::Fill in DEPLOY_USER and DEPLOY_PATH at the top of .github/workflows/deploy.yml."
+            exit 1
+          fi
 
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+          # The server's public host keys (from `ssh-keyscan grammas.arsus.it`), so we only ever talk to this server.
+          cat > ~/.ssh/known_hosts <<'KEYS'
+          grammas.arsus.it ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKJYw9ByJW+VUJmCgZj5k7Ed0DzGPoAtcaJ+CZVK835q
+          grammas.arsus.it ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCYUmCmu/+gfTD65Q82+IZGPAQ9xs2P2srb65tkZAFwbHnMyqsfwfW/1oj68UTKlj+GISwiQohzHkazZoTU0rKs=
+          grammas.arsus.it ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOB8bX4iOGOUoRlCtFcUSi331eofjJRAuFOrwPqpd/1eJTHR3BQF847MGYfyfJ98WPxvQIgk0t+ibMt1nTOdAs0OtXbVjTi8OmNO/iptaHMxMFPY9iP9M0tH7oJxPcLTwdtIGD29bWtkLUk0ESQt20UnawDD6UJXsllqBvsmFrz2Dz/Lz31adO3ixkgt51Xh7h9JVeeEJ2SYPuuqYwbyja8rp47wv+RNq5zTnrmj+Z2tPzSAJJBNlSTd1zBqHOmrUAft2IJeiUbm2jwpxwJJbNCI29ut92+rQ17GzOSkAQVsR5Kh47+vBSL12K3rnyN+qDv42NA+KYMMtnuWY0CGfP
+          KEYS
+
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            "$SSH_USER@$HOST" "cd '$DIR' && git pull --ff-only && ./deploy.sh"
+            "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && git pull --ff-only && ./deploy.sh"
