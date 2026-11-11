@@ -19,6 +19,7 @@ class TopicSeeder extends Seeder
             ['slug' => 'samengestelde-woorden', 'name' => 'Samengestelde woorden', 'description' => 'Aaneenschrijven, tussenklanken en streepjes.'],
             ['slug' => 'hoofdletters', 'name' => 'Hoofdletters', 'description' => 'Wanneer gebruik je een hoofdletter en wanneer een kleine letter?'],
             ['slug' => 'leestekens', 'name' => 'Leestekens', 'description' => 'Komma, punt, puntkomma, dubbele punt en apostrof.'],
+            ['slug' => 'tekstbegrip', 'name' => 'Tekstbegrip', 'description' => 'Lees een korte tekst en beantwoord vragen over wat er staat en wat de schrijver bedoelt.'],
         ];
 
         foreach ($topics as $index => $topic) {

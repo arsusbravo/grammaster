@@ -1,4 +1,5 @@
 import type {
+  Passage,
   FillBlankQuestion,
   MarkErrorQuestion,
   MultipleChoiceQuestion,
@@ -21,6 +22,25 @@ export const multipleChoice: MultipleChoiceQuestion = {
       'Hij wordt morgen veertien.',
       'Hij wort morgen veertien.',
     ],
+    multiple: false,
+  },
+}
+
+export const passage: Passage = {
+  id: 1,
+  title: 'De fiets van Daan',
+  body: 'Daan fietste elke ochtend over de dijk naar school. Het was een oude fiets met een rammelend spatbord.\n\nOp maandag was de fiets verdwenen. Daan zocht eerst bij de schuur en daarna achter het huis van de buren.\n\nNa school liep Daan langs het politiebureau. Daar stond zijn fiets, tegen de muur.',
+}
+
+/** A normal question that is about a text. */
+export const passageQuestion: MultipleChoiceQuestion = {
+  id: 7,
+  type: 'multiple_choice',
+  prompt: 'Waar stond de fiets van Daan aan het eind?',
+  difficulty: 1,
+  passage,
+  data: {
+    options: ['In de schuur.', 'Bij de buren.', 'Bij het politiebureau.'],
     multiple: false,
   },
 }

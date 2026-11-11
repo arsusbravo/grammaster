@@ -27,6 +27,8 @@ class SampleQuestions
     private function questions(): Collection
     {
         return Question::published()
+            // A question about a text cannot be shown without its text, so it is never a sample.
+            ->whereNull('passage_id')
             ->with(['topic', 'level'])
             ->whereIn('type', array_map(fn (QuestionType $type) => $type->value, self::TYPES))
             ->orderBy('id')

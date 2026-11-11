@@ -32,6 +32,13 @@ describe('remembering questions', () => {
     expect(cachedQuestions(3)).toEqual([])
   })
 
+  it('keeps the story of a question about a text', () => {
+    rememberQuestions(1, [{ ...q(1), passage: fx.passage }, q(2)])
+
+    expect(cachedQuestions(1)[0].passage).toEqual(fx.passage)
+    expect(cachedQuestions(1)[1].passage ?? null).toBeNull()
+  })
+
   it('puts new questions first and does not keep duplicates', () => {
     rememberQuestions(1, [q(1), q(2)])
     rememberQuestions(1, [q(3), q(1)])

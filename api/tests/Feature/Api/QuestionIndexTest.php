@@ -104,7 +104,7 @@ it('never exposes answers or explanations, for every seeded question', function 
     $data = $this->getJson('/api/v1/questions?limit=50')->assertOk()->json('data');
     $forbidden = ['correct', 'accepted', 'error_index', 'correction', 'alternative_orders', 'explanation', 'role', 'case_sensitive'];
 
-    expect($data)->toHaveCount(35);
+    expect($data)->toHaveCount(Question::count());
     foreach ($data as $question) {
         expect(array_intersect(allKeys($question), $forbidden))->toBe([], "question {$question['id']} leaks");
     }

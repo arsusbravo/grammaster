@@ -5,6 +5,7 @@ import MarkError from './MarkError.vue'
 import MultipleChoice from './MultipleChoice.vue'
 import OrderWords from './OrderWords.vue'
 import ParseSentence from './ParseSentence.vue'
+import PassageCard from './PassageCard.vue'
 import type { Answer, AnswerResult, Question, QuestionType } from '@/types/api'
 
 // Every question component has the same contract: v-model (the answer), disabled, result.
@@ -30,6 +31,7 @@ const headingId = useId()
 
 <template>
   <div role="group" :aria-labelledby="headingId">
+    <PassageCard v-if="question.passage" :passage="question.passage" />
     <h2 :id="headingId" class="mb-4 text-xl leading-snug sm:text-2xl">{{ question.prompt }}</h2>
     <component
       :is="component"

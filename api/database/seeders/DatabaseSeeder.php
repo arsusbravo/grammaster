@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             LevelSeeder::class,
             TopicSeeder::class,
             QuestionSeeder::class,
+            PassageSeeder::class,
             ExamSeeder::class,
             UserSeeder::class,
         ]);

@@ -42,7 +42,7 @@ class QuestionsTable
                             ->limit(90)
                             ->wrap()
                             ->weight('medium')
-                            ->description(fn (Question $record) => Str::limit($record->prompt, 70))
+                            ->description(fn (Question $record) => ($record->passage ? '['.Str::limit($record->passage->title, 40).'] ' : '').Str::limit($record->prompt, 70))
                             // Search the prompt and the question content (the data JSON).
                             ->searchable(query: fn (Builder $query, string $search) => $query->where(
                                 fn (Builder $q) => $q->where('prompt', 'like', "%{$search}%")->orWhere('data', 'like', "%{$search}%"),
@@ -57,12 +57,14 @@ class QuestionsTable
                     ]),
                 ])->from('md'),
             ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('passage'))
             ->defaultSort('id', 'desc')
             ->recordUrl(fn (Question $record) => route('filament.admin.resources.questions.edit', $record))
             ->filters([
                 SelectFilter::make('type')->label('Soort')->options(QuestionType::class),
                 SelectFilter::make('topic_id')->label('Onderwerp')->relationship('topic', 'name'),
                 SelectFilter::make('level_id')->label('Niveau')->relationship('level', 'name'),
+                SelectFilter::make('passage_id')->label('Tekst')->relationship('passage', 'title'),
                 SelectFilter::make('difficulty')->label('Moeilijkheid')->options([1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5']),
                 TernaryFilter::make('is_published')->label('Gepubliceerd')->trueLabel('Gepubliceerd')->falseLabel('Concept'),
             ])

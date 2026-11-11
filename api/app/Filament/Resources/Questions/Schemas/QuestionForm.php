@@ -43,6 +43,12 @@ class QuestionForm
                         ->required()
                         ->live()
                         ->helperText('Bepaalt welke velden je hieronder invult.'),
+                    Select::make('passage_id')
+                        ->label('Bij tekst (optioneel)')
+                        ->relationship('passage', 'title')
+                        ->searchable()
+                        ->preload()
+                        ->helperText('Is dit een vraag over een tekst? Kies de tekst; leerlingen zien die boven de vraag. Teksten maak je bij Teksten.'),
                     Select::make('difficulty')
                         ->label('Moeilijkheid')
                         ->options([1 => '1 - heel makkelijk', 2 => '2 - makkelijk', 3 => '3 - gemiddeld', 4 => '4 - moeilijk', 5 => '5 - heel moeilijk'])

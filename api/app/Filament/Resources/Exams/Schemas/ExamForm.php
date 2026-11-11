@@ -94,14 +94,14 @@ class ExamForm
     private static function questionOptions(mixed $levelId): array
     {
         return Question::published()
-            ->with('topic')
+            ->with(['topic', 'passage'])
             ->when($levelId, fn ($q, $level) => $q->where('level_id', $level))
             ->orderBy('topic_id')
             ->orderBy('id')
             ->limit(500)
             ->get()
             ->mapWithKeys(fn (Question $q) => [
-                $q->id => "[{$q->type->getLabel()} · {$q->topic->name}] ".Str::limit($q->summary(), 90),
+                $q->id => "[{$q->type->getLabel()} · {$q->topic->name}".($q->passage ? " · tekst: {$q->passage->title}" : '').'] '.Str::limit($q->summary(), 90),
             ])
             ->all();
     }

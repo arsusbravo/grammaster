@@ -25,6 +25,8 @@ class QuestionResource extends JsonResource
             'difficulty' => $this->difficulty,
             'topic' => new TopicResource($this->whenLoaded('topic')),
             'level' => new LevelResource($this->whenLoaded('level')),
+            // The text the question is about (null for a normal question).
+            'passage' => $this->passage_id === null ? null : new PassageResource($this->whenLoaded('passage')),
             'data' => $this->type->handler()->publicData($this->data),
             'points' => $this->whenPivotLoaded('exam_questions', fn () => $this->pivot->points),
         ];

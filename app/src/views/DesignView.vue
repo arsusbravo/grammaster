@@ -87,6 +87,18 @@ interface Demo {
 
 const demos: Demo[] = [
   {
+    title: 'A question about a text (passage card above any question type)',
+    question: fx.passageQuestion,
+    answer: ref<Answer | null>(null),
+    states: [
+      {
+        label: 'Incorrect (correct one is shown)',
+        answer: { selected: [0] },
+        result: fx.result(7, false, { selected: [2] }),
+      },
+    ],
+  },
+  {
     title: 'multiple_choice (single)',
     question: fx.multipleChoice,
     answer: ref<Answer | null>(null),

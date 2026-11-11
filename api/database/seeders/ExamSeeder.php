@@ -32,6 +32,8 @@ class ExamSeeder extends Seeder
 
             $questions = Question::published()
                 ->where('level_id', $level->id)
+                // Questions about a text are not part of the sample exams (yet).
+                ->whereNull('passage_id')
                 ->orderBy('id')
                 ->get()
                 ->sortBy(fn (Question $q) => array_search($q->type->value, $typeOrder, true))

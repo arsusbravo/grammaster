@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Enums\QuestionType;
 use App\Models\Level;
+use App\Models\Passage;
 use App\Models\Question;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,6 +29,12 @@ class QuestionFactory extends Factory
             'difficulty' => 1,
             'is_published' => true,
         ];
+    }
+
+    /** A question about a text. */
+    public function withPassage(?Passage $passage = null): static
+    {
+        return $this->state(fn () => ['passage_id' => $passage?->id ?? Passage::factory()]);
     }
 
     public function unpublished(): static

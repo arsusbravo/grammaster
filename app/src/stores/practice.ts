@@ -5,6 +5,7 @@ import { errorKind, type ErrorKind } from '@/api/errors'
 import { emptyAnswer, isAnswerComplete } from '@/lib/answers'
 import { enqueueAnswer } from '@/lib/offline/outbox'
 import { pickOffline, rememberQuestions } from '@/lib/offline/questionCache'
+import { newId } from '@/lib/uuid'
 import { useAuthStore } from '@/stores/auth'
 import type { Answer, AnswerResult, Question, QuestionFilters } from '@/types/api'
 
@@ -158,7 +159,7 @@ export const usePracticeStore = defineStore('practice', () => {
 
   async function start(newFilters: QuestionFilters) {
     reset()
-    sessionId.value = crypto.randomUUID()
+    sessionId.value = newId()
     filters.value = { ...newFilters }
     status.value = 'loading'
     await advance()

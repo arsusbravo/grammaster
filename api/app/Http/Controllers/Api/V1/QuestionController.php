@@ -21,7 +21,7 @@ class QuestionController extends Controller
         $filters = $request->validated();
 
         $questions = Question::published()
-            ->with(['topic', 'level'])
+            ->with(['topic', 'level', 'passage'])
             ->when($filters['topic'] ?? null, fn ($q, $slug) => $q->whereHas('topic', fn ($t) => $t->where('slug', $slug)))
             ->when($filters['level'] ?? null, fn ($q, $slug) => $q->whereHas('level', fn ($l) => $l->where('slug', $slug)))
             ->when($filters['difficulty'] ?? null, fn ($q, $difficulty) => $q->where('difficulty', $difficulty))

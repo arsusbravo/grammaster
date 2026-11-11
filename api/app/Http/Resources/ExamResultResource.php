@@ -22,7 +22,7 @@ class ExamResultResource extends JsonResource
     {
         $answers = $this->answers->keyBy('question_id');
 
-        $review = $this->exam->questions->load('topic')->map(function ($question) use ($answers) {
+        $review = $this->exam->questions->load(['topic', 'passage'])->map(function ($question) use ($answers) {
             $given = $answers->get($question->id);
             $points = $question->pivot->points;
 

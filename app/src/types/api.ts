@@ -44,12 +44,21 @@ export interface ParseSentenceAnswer {
   roles: (string | null)[]
 }
 
+/** A text (story) that questions are about. Plain text; a blank line starts a new paragraph. */
+export interface Passage {
+  id: number
+  title: string
+  body: string
+}
+
 interface QuestionBase {
   id: number
   prompt: string
   difficulty: number
   topic?: Topic
   level?: Level
+  /** The text this question is about; null (or absent) for a normal question. */
+  passage?: Passage | null
 }
 
 // What the API sends before answering: never the solution.

@@ -102,6 +102,11 @@
     "waitingScore": "{n} wachten op controle",
     "finishedQueued": "{n} antwoorden worden nagekeken zodra je weer online bent."
   },
+  "passage": {
+    "label": "Tekst",
+    "hide": "Tekst verbergen",
+    "show": "Tekst tonen"
+  },
   "question": {
     "correct": "Goed",
     "incorrect": "Fout",

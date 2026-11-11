@@ -9,6 +9,7 @@ import MarkError from './MarkError.vue'
 import MultipleChoice from './MultipleChoice.vue'
 import OrderWords from './OrderWords.vue'
 import ParseSentence from './ParseSentence.vue'
+import PassageCard from './PassageCard.vue'
 import QuestionRenderer from './QuestionRenderer.vue'
 
 describe('MultipleChoice', () => {
@@ -340,6 +341,35 @@ describe('QuestionRenderer', () => {
     expect(wrapper.find('[role=group]').attributes('aria-labelledby')).toBe(
       wrapper.find('h2').attributes('id'),
     )
+  })
+
+  it('shows the story above a question about a text, and nothing for a normal question', () => {
+    const about = mount(QuestionRenderer, {
+      props: { question: fx.passageQuestion, modelValue: null },
+      global: { plugins: [i18n] },
+    })
+    const normal = mount(QuestionRenderer, {
+      props: { question: fx.multipleChoice, modelValue: null },
+      global: { plugins: [i18n] },
+    })
+    const markup = about.html()
+
+    expect(about.findComponent(PassageCard).exists()).toBe(true)
+    expect(about.text()).toContain('Daan fietste elke ochtend over de dijk')
+    // The story comes before the question.
+    expect(markup.indexOf('De fiets van Daan')).toBeLessThan(
+      markup.indexOf(fx.passageQuestion.prompt),
+    )
+    expect(about.findComponent(MultipleChoice).exists()).toBe(true)
+    expect(normal.findComponent(PassageCard).exists()).toBe(false)
+    expect(
+      mount(QuestionRenderer, {
+        props: { question: { ...fx.multipleChoice, passage: null }, modelValue: null },
+        global: { plugins: [i18n] },
+      })
+        .findComponent(PassageCard)
+        .exists(),
+    ).toBe(false)
   })
 
   it('passes the answer, disabled and result through to the question component', async () => {

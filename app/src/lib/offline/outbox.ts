@@ -1,5 +1,6 @@
 import { ApiError } from '@/api/client'
 import { readJson, writeJson } from '@/lib/storage'
+import { newId } from '@/lib/uuid'
 import type { Answer, AnswerResult, Question } from '@/types/api'
 
 // Answers given without a connection. They wait here (per student, on this device) and the server checks
@@ -61,7 +62,7 @@ export function enqueueAnswer(
 ): QueuedAnswer {
   const queued: QueuedAnswer = {
     ...entry,
-    id: crypto.randomUUID(),
+    id: newId(),
     queuedAt: new Date().toISOString(),
   }
   writeJson(queueKey(userId), [...queuedAnswers(userId), queued])

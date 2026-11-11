@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
-#[Fillable(['topic_id', 'level_id', 'type', 'prompt', 'data', 'explanation', 'difficulty', 'is_published'])]
+#[Fillable(['topic_id', 'level_id', 'passage_id', 'type', 'prompt', 'data', 'explanation', 'difficulty', 'is_published'])]
 class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
@@ -47,6 +47,16 @@ class Question extends Model
     public function level(): BelongsTo
     {
         return $this->belongsTo(Level::class);
+    }
+
+    /**
+     * The text this question is about, if any.
+     *
+     * @return BelongsTo<Passage, $this>
+     */
+    public function passage(): BelongsTo
+    {
+        return $this->belongsTo(Passage::class);
     }
 
     /** @return BelongsToMany<Exam, $this, ExamQuestion> */

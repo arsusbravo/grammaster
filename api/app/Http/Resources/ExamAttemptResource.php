@@ -34,7 +34,7 @@ class ExamAttemptResource extends JsonResource
             // Rounded up so the timer never shows less time than the student really has left.
             'remaining_seconds' => max(0, (int) ceil(now()->diffInSeconds($endsAt, false))),
             'finished_at' => $this->finished_at?->toIso8601String(),
-            'questions' => QuestionResource::collection($this->exam->questions->load('topic')),
+            'questions' => QuestionResource::collection($this->exam->questions->load(['topic', 'passage'])),
             // Object keyed by question id (always an object, even when empty).
             'answers' => (object) $this->answers->mapWithKeys(fn ($a) => [$a->question_id => $a->answer])->all(),
         ];
